@@ -7,6 +7,7 @@ import Card from "../components/Card";
 import SectionHeader from "../components/SectionHeader";
 import { colors } from "../theme/colors";
 import AgencyBadge from "../components/AgencyBadge";
+import { getAiRoute } from "services/aiApi";
 
 const routes = [
   {
@@ -86,30 +87,34 @@ export default function PlanRouteScreen({ navigation }) {
       return;
     }
 
-    const newRoute = {
-      id: Date.now().toString(),
-      startLocation,
-      destination,
-      departureTime: departureTime || "Now",
-      preference: selectedPreference,
-      createdAt: new Date().toLocaleString(),
-    };
-
     try {
+      const aiRoute = await getAiRoute({
+        startLocation,
+        destination,
+        departureTime,
+        preference: selectedPreference,
+      });
+
+      const newRoute = {
+        id: Date.now().toString(),
+        ...aiRoute,
+        startLocation,
+        destination,
+        preference: selectedPreference,
+        createdAt: new Date().toLocaleString(),
+      };
+
       const updatedRoutes = [newRoute, ...savedRoutes].slice(0, 20);
-      await AsyncStorage.setItem('saved-routes', JSON.stringify(updatedRoutes));
+      await AsyncStorage.setItem("saved-routes", JSON.stringify(updatedRoutes));
       setSavedRoutes(updatedRoutes);
-      
-      Alert.alert(
-        "✓ Route Planned",
-        `Your route from ${startLocation} to ${destination} has been saved!`,
-        [{ text: "OK" }]
-      );
-    } catch (error) {
-      console.error('Error saving route:', error);
-      Alert.alert("Error", "Failed to save route");
+
+      Alert.alert("✓ AI Route Planned", "Your AI-optimized route is ready!");
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "AI route planning failed");
     }
   }
+
 
   function isRouteBookmarked(routeId) {
     if (!startLocation || !destination) {
