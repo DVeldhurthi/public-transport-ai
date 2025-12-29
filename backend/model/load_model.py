@@ -6,7 +6,7 @@ from sklearn.tree import DecisionTreeRegressor
 
 import os
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "model/delay_model (1).pkl")
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "delay_model (1).pkl")
 
 with open(MODEL_PATH, "rb") as f:
     model = pickle.load(f)
