@@ -1,5 +1,9 @@
 import pickle
 
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.tree import DecisionTreeRegressor
+
+
 MODEL_PATH = "model/delay_model (1).pkl"
 
 with open(MODEL_PATH, "rb") as f:
